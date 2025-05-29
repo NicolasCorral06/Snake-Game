@@ -7,8 +7,8 @@ pygame.init()
 
 # Variáveis do jogo
 sw, sh = 800, 800  
-block_size = 40
-normal_speed = 10
+block_size = 40 # tamanho de cada bloco
+normal_speed = 10 
 current_speed = normal_speed
 bg_color = (0, 0, 0)  
 grid_color = (50, 50, 50)
@@ -64,8 +64,7 @@ def main():
                 
             if snake.eat(food):
                 food.spawn()
-                # Garante que a comida não apareça no corpo da cobra
-                while (food.x, food.y) in snake.body:
+                while (food.x, food.y) in snake.body:  # A comida n aparece na cobra
                     food.spawn()
             
             food.draw(screen)

@@ -11,12 +11,20 @@ snake_color = (0, 255, 0)
 text_color = (255, 255, 255)
 colisao = False  
 
-# Tipos de maçãs e seus atributos
+red_color = (255, 0, 0)
+blue_color = (0, 100, 255)
+yellow_color =  (255, 255, 0)
+purple_color = (128, 0, 128)
+
+time_boost = 3 # Duração do boost
+power_boost = 1.5 # Velocidade adicional 
+
+# Cada maça e seus valores
 APPLE_TYPES = {
-    "red": {"color": (255, 0, 0), "points": 1, "effect": None, "spawn_chance": 0.7},
-    "blue": {"color": (0, 100, 255), "points": 2, "effect": None, "spawn_chance": 0.2},
-    "yellow": {"color": (255, 255, 0), "points": 3, "effect": None, "spawn_chance": 0.08},
-    "purple": {"color": (128, 0, 128), "points": 1, "effect": "speed_boost", "spawn_chance": 0.1}
+    "red": {"color": red_color, "points": 1, "effect": None, "spawn_chance": 0.7},
+    "blue": {"color": blue_color, "points": 2, "effect": None, "spawn_chance": 0.2},
+    "yellow": {"color": yellow_color, "points": 3, "effect": None, "spawn_chance": 0.08},
+    "purple": {"color": purple_color, "points": 1, "effect": "speed_boost", "spawn_chance": 0.1}
 }
 
 # Carrega a pontuação máxima
@@ -60,11 +68,10 @@ class Snake:
         self.game_active = True
         self.speed_boost_active = False
         self.speed_boost_end_time = 0
-        #self.apples_eaten = {"red": 0, "blue": 0, "yellow": 0, "purple": 0}
         
     def update(self, colisao):
         if not self.game_active:
-            return normal_speed  # Sempre retorna velocidade
+            return normal_speed 
 
         # Verifica se o boost acabou
         if self.speed_boost_active and time.time() > self.speed_boost_end_time:
@@ -120,8 +127,8 @@ class Snake:
             # Aplica efeitos especiais
             if food.effect == "speed_boost":
                 self.speed_boost_active = True
-                self.speed_boost_end_time = time.time() + 3  # 3 segundos de boost
-                return int(normal_speed * 1.5)  # 50% mais rápido
+                self.speed_boost_end_time = time.time() + time_boost 
+                return int(normal_speed * power_boost)  
 
             # Verifica recorde
             if self.score > self.high_score:
@@ -161,11 +168,6 @@ class Food:
         
     def draw(self, surface):
         pygame.draw.rect(surface, self.color, (self.x, self.y, self.block_size, self.block_size))
-        # Adiciona um brilho nas maçãs especiais
-        if self.type != "red":
-            s = pygame.Surface((self.block_size, self.block_size), pygame.SRCALPHA)
-            s.fill((*self.color[:3], 50))
-            surface.blit(s, (self.x, self.y))
 
 # Desenha a grade
 def draw_grid(surface, sw, sh, block_size, grid_color):
@@ -177,7 +179,8 @@ def draw_grid(surface, sw, sh, block_size, grid_color):
 # Mostra a pontuação e informações
 def show_score(surface, snake, sw, text_color):
     font = pygame.font.SysFont('Arial', 25)
-    font_small = pygame.font.SysFont('Arial', 15)
+    font_small = pygame.font.SysFont('Arial', 20)
+    
     score_text = font.render(f'Pontuação: {snake.score}', True, text_color)
     high_score_text = font.render(f'Recorde: {snake.high_score}', True, text_color)
 
@@ -212,7 +215,7 @@ def game_over_screen(surface, snake, sw, sh, text_color, bg_color):
         record_text = font_large.render('NOVO RECORDE!', True, (255, 215, 0))
         surface.blit(record_text, (sw//2 - record_text.get_width()//2, sh//2 - 150))
     
-    # Textos do jogo
+    # Textos de game over
     game_over_text = font_large.render('GAME OVER', True, text_color)
     score_text = font_medium.render(f'Pontuação: {snake.score}', True, text_color)
     high_score_text = font_medium.render(f'Recorde: {snake.high_score}', True, text_color)
