@@ -1,7 +1,7 @@
 import pygame, random, json, os, time
 
 # Variáveis do jogo
-sw, sh = 800, 800  # screen width, screen height
+sw, sh = 800, 800  
 block_size = 40
 normal_speed = 10
 current_speed = normal_speed
@@ -9,7 +9,7 @@ bg_color = (0, 0, 0)
 grid_color = (50, 50, 50)
 snake_color = (0, 255, 0)
 text_color = (255, 255, 255)
-colisao = False  # False = portal (atravessa paredes), True = morre ao colidir
+colisao = False  
 
 # Tipos de maçãs e seus atributos
 APPLE_TYPES = {

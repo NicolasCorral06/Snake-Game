@@ -5,4 +5,3 @@ Learning how to use pygame
 - Clone the repository
 - Install pygame via terminal using `pip install pygame-ce`
 - Run `game.py`
-
