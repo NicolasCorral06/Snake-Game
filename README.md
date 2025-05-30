@@ -8,5 +8,5 @@ Learning how to use pygame
 
 ## Controlls
 - Arrows: Movement
--   C   : Enable collision 
+-   C   : Enable collision (Default: no borders)
 -  ESC  : Close the game

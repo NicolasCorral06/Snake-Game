@@ -25,10 +25,13 @@ clock = pygame.time.Clock()
 def main():
     global colisao, current_speed
     
+    # as classes do outro arquivo
     snake = Snake(sw, sh, block_size)
     food = Food(sw, sh, block_size)
     
+    # loop do jogo
     while True:
+        # checa os botões
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -53,6 +56,7 @@ def main():
                         snake.reset()
                         current_speed = normal_speed
         
+        # inicia tudo
         if snake.game_active:
             screen.fill(bg_color)
             draw_grid(screen, sw, sh, block_size, grid_color)
@@ -62,11 +66,12 @@ def main():
             if speed_change:
                 current_speed = speed_change
                 
-            if snake.eat(food):
+            if snake.eat(food): 
                 food.spawn()
-                while (food.x, food.y) in snake.body:  # A comida n aparece na cobra
+                while (food.x, food.y) in snake.body:  # Garante q a comida n aparece na cobra
                     food.spawn()
             
+            # desenha a comida, cobra e a pontuação
             food.draw(screen)
             snake.draw(screen, snake_color)
             show_score(screen, snake, sw, text_color)

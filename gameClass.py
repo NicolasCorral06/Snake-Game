@@ -1,3 +1,8 @@
+'''
+pensei que ia ser mais simples fazer isso, mas jesus amado, muita matematica pro meu gosto
+
+'''
+
 import pygame, random, json, os, time
 
 # Variáveis do jogo
@@ -27,7 +32,7 @@ APPLE_TYPES = {
     "purple": {"color": purple_color, "points": 1, "effect": "speed_boost", "spawn_chance": 0.1}
 }
 
-# Carrega a pontuação máxima
+# Carrega a pontuação
 def load_high_score(score_file='snake_scores.json'):
     script_dir = os.path.dirname(os.path.abspath(__file__))
     score_path = os.path.join(script_dir, score_file)
@@ -41,7 +46,7 @@ def load_high_score(score_file='snake_scores.json'):
                 return 0
     return 0
 
-# Salva a pontuação máxima
+# Salva a pontuação
 def save_high_score(score, score_file='snake_scores.json'):
     script_dir = os.path.dirname(os.path.abspath(__file__))
     score_path = os.path.join(script_dir, score_file)
@@ -50,14 +55,16 @@ def save_high_score(score, score_file='snake_scores.json'):
     with open(score_path, 'w') as f:
         json.dump(data, f)
 
-# Classe da cobra
+# Classe da cobra, tudo envolvendo ela
 class Snake:
+    # config inicial da classe
     def __init__(self, sw, sh, block_size):
         self.sw = sw
         self.sh = sh
         self.block_size = block_size
         self.reset()
-        
+
+    # resetando o jogo    
     def reset(self):
         self.x, self.y = self.block_size * 5, self.block_size * 5
         self.xdir, self.ydir = 1, 0
@@ -68,7 +75,8 @@ class Snake:
         self.game_active = True
         self.speed_boost_active = False
         self.speed_boost_end_time = 0
-        
+
+    # atualiza as coisas, como tamanho, pontuação e velocidade    
     def update(self, colisao):
         if not self.game_active:
             return normal_speed 
@@ -106,17 +114,19 @@ class Snake:
                 return normal_speed
 
         return int(normal_speed * 1.5) if self.speed_boost_active else normal_speed
-            
+
+    # desenha a cobra        
     def draw(self, surface, snake_color):
         for segment in self.body:
             pygame.draw.rect(surface, snake_color, (*segment, self.block_size, self.block_size))
             pygame.draw.rect(surface, (0, 200, 0), (*segment, self.block_size, self.block_size), 1)
-            
+        
+    # Impede que a cobra vá na direção oposta
     def change_dir(self, x, y):
-        # Impede que a cobra vá na direção oposta
         if (self.xdir * -1, self.ydir * -1) != (x, y):
             self.xdir, self.ydir = x, y
-            
+
+    # Checa quando come as maçãs    
     def eat(self, food):
         if self.x == food.x and self.y == food.y:
             # Adiciona pontos
@@ -138,17 +148,20 @@ class Snake:
             return True
         return False
     
+    # caso game over, encerra tudo 
     def game_over(self):
         self.game_active = False
 
 # Classe da comida
 class Food:
+    # config inicial da classe
     def __init__(self, sw, sh, block_size):
         self.sw = sw
         self.sh = sh
         self.block_size = block_size
         self.spawn()
-        
+
+    # spawna as maçãs 
     def spawn(self):
         # Escolhe um tipo de maçã baseado nas probabilidades
         rand = random.random()
@@ -165,11 +178,12 @@ class Food:
                 
         self.x = random.randint(0, (self.sw - self.block_size) // self.block_size) * self.block_size
         self.y = random.randint(0, (self.sh - self.block_size) // self.block_size) * self.block_size
-        
+
+    # spawna/desenha as maçãs    
     def draw(self, surface):
         pygame.draw.rect(surface, self.color, (self.x, self.y, self.block_size, self.block_size))
 
-# Desenha a grade
+# Desenha a grade/tela
 def draw_grid(surface, sw, sh, block_size, grid_color):
     for x in range(0, sw, block_size):
         pygame.draw.line(surface, grid_color, (x, 0), (x, sh))
@@ -181,41 +195,45 @@ def show_score(surface, snake, sw, text_color):
     font = pygame.font.SysFont('Arial', 25)
     font_small = pygame.font.SysFont('Arial', 20)
     
+    # pontuação
     score_text = font.render(f'Pontuação: {snake.score}', True, text_color)
     high_score_text = font.render(f'Recorde: {snake.high_score}', True, text_color)
 
+    # informações das maçãs
     redApple_text = font_small.render(f'Vermelha: +1 ponto', True, text_color)
     blueApple_text = font_small.render(f'Azul: +2 pontos', True, text_color)
     yellowApple_text = font_small.render(f'Amarela: +3 pontos', True, text_color)
     purpleApple_text = font_small.render(f'Roxa: 1.5% boost', True, text_color)
 
+    # pontuação
     surface.blit(score_text, (10, 10))
     surface.blit(high_score_text, (10, 40))
 
+    # informações das maças
     surface.blit(redApple_text, (10, 70))
     surface.blit(blueApple_text, (10, 100))
     surface.blit(yellowApple_text, (10, 130))
     surface.blit(purpleApple_text, (10, 160))
 
-    # Mostra tempo de boost no canto superior direito
+    # mostra tempo de boost no canto superior direito
     if snake.speed_boost_active:
         time_left = max(0, snake.speed_boost_end_time - time.time())
         boost_text = font.render(f'Boost: {time_left:.1f}s', True, (128, 0, 128))
         surface.blit(boost_text, (sw - boost_text.get_width() - 10, 40))
 
-# Tela de game over
+# tela de game over
 def game_over_screen(surface, snake, sw, sh, text_color, bg_color):
     surface.fill(bg_color)
     font_large = pygame.font.SysFont('Arial', 50)
     font_medium = pygame.font.SysFont('Arial', 35)
     font_small = pygame.font.SysFont('Arial', 25)
     
-    # Novo recorde
+    # novo recorde
     if snake.score == snake.high_score and snake.score > 0:
         record_text = font_large.render('NOVO RECORDE!', True, (255, 215, 0))
         surface.blit(record_text, (sw//2 - record_text.get_width()//2, sh//2 - 150))
     
-    # Textos de game over
+    # textos de game over
     game_over_text = font_large.render('GAME OVER', True, text_color)
     score_text = font_medium.render(f'Pontuação: {snake.score}', True, text_color)
     high_score_text = font_medium.render(f'Recorde: {snake.high_score}', True, text_color)
@@ -224,7 +242,7 @@ def game_over_screen(surface, snake, sw, sh, text_color, bg_color):
     surface.blit(score_text, (sw//2 - score_text.get_width()//2, sh//2 - 20))
     surface.blit(high_score_text, (sw//2 - high_score_text.get_width()//2, sh//2 + 20))
     
-    # Instruções
+    # instruções
     continue_text = font_small.render('Pressione ENTER para continuar', True, text_color)
     quit_text = font_small.render('Pressione ESC para sair', True, text_color)
     
