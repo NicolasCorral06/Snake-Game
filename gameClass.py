@@ -190,6 +190,10 @@ def draw_grid(surface, sw, sh, block_size, grid_color):
     for y in range(0, sh, block_size):
         pygame.draw.line(surface, grid_color, (0, y), (sw, y))
 
+# mostra fps
+def show_fps(clock):
+    print(f"{clock.get_fps():.2f}")
+    
 # Mostra a pontuação e informações
 def show_score(surface, snake, sw, text_color):
     font = pygame.font.SysFont('Arial', 25)

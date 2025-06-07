@@ -1,6 +1,6 @@
 import pygame
 import sys
-from gameClass import Snake, Food, draw_grid, show_score, game_over_screen
+from gameClass import Snake, Food, draw_grid, show_score, game_over_screen, show_fps
 
 # Inicialização do pygame
 pygame.init()
@@ -31,6 +31,8 @@ def main():
     
     # loop do jogo
     while True:
+        #show_fps(clock)
+
         # checa os botões
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -85,5 +87,6 @@ def main():
             snake.reset()
             current_speed = normal_speed
 
+# inicia o jogo
 if __name__ == "__main__":
     main()
